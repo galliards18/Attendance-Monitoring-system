@@ -11,7 +11,7 @@ session_start();
 $student_id = $yearid = $subid = $grades =  "";
 
 $student_id = $_GET['student_id'];
-$subid = $_GET['subid']; // Assuming you're passing subject ID through GET parameter
+$subid = isset($_GET['subid']) ? $_GET['subid'] : null;
 
 $sql = "SELECT * FROM grades WHERE student_id='$student_id' AND subid='$subid'";
 

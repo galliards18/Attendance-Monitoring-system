@@ -19,12 +19,21 @@ if ($row1 = mysqli_fetch_assoc($result1)) {
     $registrarQueue = $row1['Que_no'];
 }
 
-// Function to get the next available queue number
 function getNextQueueNumber($conn) {
-    $sql = "SELECT MAX(Que_no) AS max_que FROM registrar";
-    $result = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result);
-    return $row['max_que'] + 1;
+    $currentDate = date("Y-m-d");
+    $minQue = 1001;
+    $maxQue = 1999;
+
+    $result = $conn->query("SELECT MAX(Que_no) AS max_que FROM registrar WHERE Date = '$currentDate'");
+    $row = $result->fetch_assoc();
+
+    if ($result->num_rows > 0 && $row['max_que'] !== null) {
+        $next_que = $row['max_que'] + 1;
+    } else {
+        $next_que = $minQue;
+    }
+
+    return min($next_que, $maxQue);
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -37,26 +46,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        echo 'You already have an active request for this department. Please wait for your turn.';
+        echo "<script>alert('You already have an active request for this department. Please wait for your turn.'); window.location.href='request.php';</script>";
     } else {
-        $que_no = getNextQueueNumber($conn); // Get the next queue number
+        $que_no = getNextQueueNumber($conn);
         $currentDate = date("Y-m-d");
 
         $stmt = $conn->prepare("INSERT INTO $department (Date, Que_no, Student_ID, student_fullname, IsActive) VALUES (?, ?, ?, ?, 1)");
         $stmt->bind_param("siss", $currentDate, $que_no, $student_id, $student_fullname);
 
         if ($stmt->execute()) {
-            echo 'Priority number reserved successfully. Your queue number is: ' . $que_no;
+            echo "<script>alert('Priority number reserved successfully. Your queue number is: $que_no'); window.location.href='pages-account-settings-account.php';</script>";
+            exit();
         } else {
             $error_message = addslashes($stmt->error); // Escape special characters
-            echo 'Error: ' . $error_message;
+            echo "<script>alert('Error: $error_message'); window.location.href='request.php';</script>";
         }
 
         $stmt->close();
     }
-    exit; // Ensure that no other code is executed after echoing the message
 }
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
 <head>
@@ -85,27 +95,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="../assets/js/config.js"></script>
     <style>
-      .queue-numbers {
-    display: flex;
-    align-items: center;
-}
+        .queue-numbers {
+            display: flex;
+            align-items: center;
+        }
 
-.queue-item {
-    margin-right: 40px;
-    display: flex;
-    align-items: center;
-}
+        .queue-item {
+            margin-right: 40px;
+            display: flex;
+            align-items: center;
+        }
 
-.queue-item span {
-    margin-right: 20px;
-}
+        .queue-item span {
+            margin-right: 20px;
+        }
 
-.queue-number {
-    color: #007bff;
-    font-size: 40px;
-    font-weight: bold;
-}
-
+        .queue-number {
+            color: #007bff;
+            font-size: 40px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -135,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div data-i18n="Layouts">Me</div>
                         </a>
                         <ul class="menu-sub">
-                          <li class="menu-item">
+                            <li class="menu-item">
                                 <a href="student.php" class="menu-link">
                                     <div data-i18n="Without menu">Profile</div>
                                 </a>
@@ -149,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </li>
                     <!-- Request -->
                     <li class="menu-item">
-                        <a href="request.php" class="menu-link">
+                        <a href="grades.php" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-add-to-queue"></i>
                             <div data-i18n="Analytics">Grades</div>
                         </a>
@@ -166,8 +175,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </a>
                     </div>
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-                        <center> 
-                          <p style="font-size: 18px; padding-top: 15px;"><b>Southern Leyte State University</b></p>  
+                        <center>
+                            <p style="font-size: 18px; padding-top: 15px;"><b>Southern Leyte State University</b></p>
                         </center>
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- Place this tag where you want the button to render. -->
@@ -212,92 +221,86 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <!-- Content -->
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
-                          <div class="col-md-12">
-                              <div class="card mb-4">
-                                  <h5 class="card-header">Active Queue</h5>
-                                  <!-- Account -->
-                                  <div class="card-body">
-                                      <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-5">
-                                          <div>
-                                              <img src="../assets/img/avatars/profile.png" alt="user-avatar" class="d-block" height="100" width="100" id="uploadedAvatar" style="border-radius: 50px;" />
-                                          </div>
-                                          <br>
-                                          <div class="queue-numbers">
-                                              <div class="queue-item">
-                                                  <span class="d-block d-md-inline-block mb-md-2">Registrar:</span>
-                                                  <span class="queue-number"><?php echo $registrarQueue; ?></span>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div id="formAuthentication" class="mb-3">
-    <?php if(isset($message)): ?>
-    <p><?php echo $message; ?></p>
-    <?php endif; ?>
-    <!-- Remove the form and replace it with a button -->
-    <button class="btn btn-primary d-grid w-100" onclick="requestQueueNumber()">Request Queue Number</button>
-</div>
+                            <div class="col-md-12">
+                                <div class="card mb-4">
+                                    <h5 class="card-header">Active Queue</h5>
+                                    <!-- Account -->
+                                    <div class="card-body">
+                                        <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-5">
+                                            <div>
+                                                <img src="../assets/img/avatars/profile.png" alt="user-avatar" class="d-block" height="100" width="100" id="uploadedAvatar" style="border-radius: 50px;" />
+                                            </div>
+                                            <br>
+                                            <div class="queue-numbers">
+                                                <div class="queue-item">
+                                                    <span class="d-block d-md-inline-block mb-md-2">Registrar:</span>
+                                                    <span class="queue-number"><?php echo $registrarQueue; ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="formAuthentication" class="mb-3"> <?php if(isset($message)): ?> <p><?php echo $message; ?></p> <?php endif; ?>
+                                <!-- Remove the form and replace it with a button -->
+                                <button class="btn btn-primary d-grid w-100" onclick="requestQueueNumber()">Request Queue Number</button>
+                                <script>
+                                function requestQueueNumber() {
+                                    // Perform AJAX request to PHP script for requesting queue number
+                                    var xhr = new XMLHttpRequest();
+                                    xhr.onreadystatechange = function() {
+                                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                                            if (xhr.status === 200) {
+                                                // Success response
+                                                var response = xhr.responseText;
+                                                alert(response); // Show response message
+                                                window.location.reload(); // Reload the page to update the queue number display
+                                            } else {
+                                                // Error response
+                                                alert('Error: ' + xhr.statusText);
+                                            }
+                                        }
+                                    };
 
-<script>
-    function requestQueueNumber() {
-        // Perform AJAX request to PHP script for requesting queue number
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    // Success response
-                    var response = xhr.responseText;
-                    alert(response); // Show response message
-                    window.location.reload(); // Reload the page to update the queue number display
-                } else {
-                    // Error response
-                    alert('Error: ' + xhr.statusText);
-                }
-            }
-        };
-
-        // Send POST request to the PHP script
-        xhr.open('POST', '<?php echo $_SERVER['PHP_SELF']; ?>', true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.send();
-    }
-</script>
-
-
-                      </div>
-
-                    <!-- / Content -->
-                    <!-- Footer -->
-                    <footer class="content-footer footer bg-footer-theme">
-                    </footer>
-                    <!-- / Footer -->
-                    <div class="content-backdrop fade"></div>
+                                    // Send POST request to the PHP script
+                                    xhr.open('POST', '<?php echo $_SERVER['PHP_SELF']; ?>', true);
+                                    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                                    xhr.send();
+                                }
+                            </script>
+                            </div>
+                        </div>
+                        <!-- / Content -->
+                        <!-- Footer -->
+                        <footer class="content-footer footer bg-footer-theme">
+                        </footer>
+                        <!-- / Footer -->
+                        <div class="content-backdrop fade"></div>
+                    </div>
+                    <!-- Content wrapper -->
                 </div>
-                <!-- Content wrapper -->
+                <!-- / Layout page -->
             </div>
-            <!-- / Layout page -->
+            <!-- Overlay -->
+            <div class="layout-overlay layout-menu-toggle"></div>
         </div>
-        <!-- Overlay -->
-        <div class="layout-overlay layout-menu-toggle"></div>
-    </div>
-    <!-- / Layout wrapper -->
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
-    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../assets/vendor/js/bootstrap.js"></script>
-    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-    <script src="../assets/vendor/js/menu.js"></script>
-    <!-- endbuild -->
-    <!-- Vendors JS -->
-    <!-- Main JS -->
-    <script src="../assets/js/main.js"></script>
-    <!-- Page JS -->
-    <script src="../assets/js/pages-account-settings-account.js"></script>
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+        <!-- / Layout wrapper -->
+        <!-- Core JS -->
+        <!-- build:js assets/vendor/js/core.js -->
+        <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+        <script src="../assets/vendor/libs/popper/popper.js"></script>
+        <script src="../assets/vendor/js/bootstrap.js"></script>
+        <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+        <script src="../assets/vendor/js/menu.js"></script>
+        <!-- endbuild -->
+        <!-- Vendors JS -->
+        <!-- Main JS -->
+        <script src="../assets/js/main.js"></script>
+        <!-- Page JS -->
+        <script src="../assets/js/pages-account-settings-account.js"></script>
+        <!-- Place this tag in your head or just before your close body tag. -->
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 
 </html>
+                            
