@@ -407,7 +407,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['Que_no']) && isset($_P
                     document.write(new Date().getFullYear());
                   </script>
                   , made with ❤️ by
-                  <a href="https://www.facebook.com/james.jeager.3" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+                  <a href="https://www.facebook.com/james.jeager.3" target="_blank" class="footer-link fw-bolder">MeProfile</a>
                 </div>
                 
               </div>

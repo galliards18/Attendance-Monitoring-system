@@ -1,28 +1,34 @@
 <?php
 session_start();
-
-if (!isset($_SESSION['Login'])) {
-    header('location: choose.php');
-    exit;
+if (!isset($_SESSION["Login"])) {
+    header("location: choose.php");
+    exit();
 }
-require_once('config.php');
-
-$student_id = $_SESSION['Login'];
-
-// Fetch student information
-$student_query = "SELECT * FROM student_registration WHERE student_id = '$student_id'";
-$student_result = mysqli_query($conn, $student_query);
-$student_data = mysqli_fetch_assoc($student_result);
-
-// Fetch grades for the student
-$grades_query = "SELECT subject.subname, subject.yearid, grades.grades 
-                 FROM grades 
-                 JOIN subject ON grades.subid = subject.subid 
-                 WHERE grades.student_id = '$student_id'
-                 ORDER BY subject.yearid ASC";
-$grades_result = mysqli_query($conn, $grades_query);
+require_once "config.php";
+function sanitize($data) {
+    return htmlspecialchars(strip_tags($data));
+}
+// Retrieve the year level of the logged-in teacher
+$teacherId = $_SESSION["Login"];
+$sqlTeacher = "SELECT yearid FROM teacher_registration WHERE teacher_id = '$teacherId'";
+$resultTeacher = mysqli_query($conn, $sqlTeacher);
+$teacher = mysqli_fetch_assoc($resultTeacher);
+$teacherYearLevel = $teacher["yearid"];
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    $firstnameFilter = isset($_GET["firstname"]) ? sanitize($_GET["firstname"]) : "";
+    // Adjust the SQL query to filter students by year level
+    $sqlquery = "SELECT * FROM student_registration WHERE yearid = '$teacherYearLevel'";
+    if (!empty($firstnameFilter)) {
+        $sqlquery.= " AND firstname LIKE '%$firstnameFilter%'";
+    }
+    if ($result = mysqli_query($conn, $sqlquery)) {
+        $totalItems = mysqli_num_rows($result);
+    }
+}
 ?>
+
 <!DOCTYPE html>
+
 <!-- beautify ignore:start -->
 <html
   lang="en"
@@ -30,7 +36,7 @@ $grades_result = mysqli_query($conn, $grades_query);
   dir="ltr"
   data-theme="theme-default"
   data-assets-path="../assets/"
-  data-template="vertical-menu-template-free"
+
 >
   <head>
     <meta charset="utf-8" />
@@ -39,7 +45,7 @@ $grades_result = mysqli_query($conn, $grades_query);
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Grades</title>
+    <title>Dashboard</title>
 
     <meta name="description" content="" />
 
@@ -65,6 +71,8 @@ $grades_result = mysqli_query($conn, $grades_query);
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
+    <link rel="stylesheet" href="../assets/vendor/libs/apex-charts/apex-charts.css" />
+
     <!-- Page CSS -->
 
     <!-- Helpers -->
@@ -73,13 +81,6 @@ $grades_result = mysqli_query($conn, $grades_query);
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="../assets/js/config.js"></script>
-    <style>
-        .card-header-design {
-        color: #fff;
-        margin-left: 400px;
-    }
-
-    </style>
   </head>
 
   <body>
@@ -110,22 +111,17 @@ $grades_result = mysqli_query($conn, $grades_query);
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="student.php" class="menu-link">
+                                <a href="teacher.php" class="menu-link">
                                     <div data-i18n="Without menu">Profile</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="pages-account-settings-account.php" class="menu-link">
-                                    <div data-i18n="Without menu">Que Number</div>
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <!-- Request -->
                     <li class="menu-item active">
-                        <a href="request.php" class="menu-link">
+                        <a href="list_student.php" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-add-to-queue"></i>
-                            <div data-i18n="Analytics">Grades</div>
+                            <div data-i18n="Analytics">Students</div>
                         </a>
                     </li>
             </aside>
@@ -149,28 +145,28 @@ $grades_result = mysqli_query($conn, $grades_query);
               <center> 
                 <p style="font-size: 18px; padding-top: 15px;"><b>Southern Leyte State University</b></p>  
               </center>
+
               <ul class="navbar-nav flex-row align-items-center ms-auto">
-                <!-- Place this tag where you want the button to render. -->
 
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                      <img src="../assets/img/avatars/profile.png" alts class="w-px-40 h-auto rounded-circle" />
+                      <img src="../assets/img/avatars/user.png" alts class="w-px-40 h-auto rounded-circle" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                      <a class="dropdown-item" href="student.php">
+                      <a class="dropdown-item" href="#">
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-                              <img src="../assets/img/avatars/profile.png" alt class="w-px-40 h-auto rounded-circle" />
+                              <img src="../assets/img/avatars/user.png" alt class="w-px-40 h-auto rounded-circle" />
                             </div>
                           </div>
                           <div class="flex-grow-1">
                             <span class="fw-semibold d-block"></span>
-                            <small class="text-muted">Admin</small>
+                            <small class="text-muted">Teacher</small>
                           </div>
                         </div>
                       </a>
@@ -184,6 +180,8 @@ $grades_result = mysqli_query($conn, $grades_query);
                   </ul>
                 </li>
                 <!--/ User -->
+
+
               </ul>
             </div>
           </nav>
@@ -195,58 +193,90 @@ $grades_result = mysqli_query($conn, $grades_query);
             <!-- Content -->
 
             <div class="container-xxl flex-grow-1 container-p-y">
-              
               <div class="row">
-                <div class="col-md-12">
-                  
-                  <div class="card mb-4">
-                    <h5 class="card-header">Grades Details</h5>
-
-                    <!-- Account -->
-                    <div class="card-body">
-                    <hr class="my-0" />
-
-                    <!-- Form -->
-                    <div class="card-body">
-                      <div class="grades-display">
-                              <h2>Current Grades</h2>
-                              <?php
-                              if (isset($student_id)) {
-                                  $sqlquery = "SELECT subject.subname, subject.yearid, grades.grades 
-                                               FROM grades 
-                                               JOIN subject ON grades.subid = subject.subid 
-                                               WHERE grades.student_id = '$student_id'
-                                               ORDER BY subject.yearid ASC";
-                                  $results = mysqli_query($conn, $sqlquery);
-                                  if (mysqli_num_rows($results) > 0) {
-                                      $grades_by_year = [];
-                                      while ($row = mysqli_fetch_assoc($results)) {
-                                          $grades_by_year[$row['yearid']][] = $row;
-                                      }
-
-                                      foreach ($grades_by_year as $year => $grades) {
-                                          echo "<div class='year-section'>";
-                                          echo "<h3>Year Level: " . htmlspecialchars($year) . "</h3>";
-                                          echo "<table class='table'>";
-                                          echo "<thead><tr><th>Subject</th><th>Grade</th></tr></thead>";
-                                          echo "<tbody>";
-                                          foreach ($grades as $grade) {
-                                              echo "<tr><td>" . htmlspecialchars($grade['subname']) . "</td><td>" . htmlspecialchars($grade['grades']) . "</td></tr>";
+                <div class="col-lg-12 mb-12 order-12">
+                  <div class="card">
+                    <div class="d-flex align-items-end row">
+                      <div class="col-lg-12">
+                        <div class="card-body">
+                          <div class="col-sm-12">
+                                <form method="GET" action="" class="search-form">
+                                    <input type="text" name="firstname" class="form-control" placeholder="First Name" value="<?php echo $firstnameFilter; ?>">
+                                    <center>
+                                        <button type="submit" class="btn btn-primary mt-2">Search</button>
+                                    </center>
+                                </form>
+                                <h1 class="text-center mb-4 student-enrolle"><?php echo "Year Level: " . $teacherYearLevel; ?></h1>
+                                <?php if (isset($totalItems)): ?>
+                                    <p class="text-center">Total Items Found: <?php echo $totalItems; ?></p>
+                                <?php
+endif; ?>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Student ID</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>Address</th>
+                                                <th>Gender</th>
+                                                <th>Email</th>
+                                                <th>Birthday</th>
+                                                <th>Phone</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                          <?php
+                                          $count = 1;
+                                          if (mysqli_num_rows($result) > 0) {
+                                              while ($row = mysqli_fetch_array($result)) {
+                                                  echo "<tr>";
+                                                  echo "<td>" . $row["id"] . "</td>";
+                                                  echo "<td>" . $row["firstname"] . "</td>";
+                                                  echo "<td>" . $row["lastname"] . "</td>";
+                                                  echo "<td>" . $row["address"] . "</td>";
+                                                  echo "<td>" . $row["gender"] . "</td>";
+                                                  echo "<td>" . $row["email"] . "</td>";
+                                                  echo "<td>" . $row["birthday"] . "</td>";
+                                                  echo "<td>" . $row["phone"] . "</td>";
+                                                  echo "<td class='action-icons'>";
+                                                  echo "<a href='view.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-show'></i></a>";
+                                                  echo "<a href='grade.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-book-content'></i></a>";
+                                                  echo "<a onclick=\"return confirm('Are you sure?')\" href='Delete.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-trash'></i></a>";
+                                                  echo "</td>";
+                                                  echo "</tr>";
+                                              }
+                                          } else {
+                                              echo "<tr><td colspan='9'>No records found</td></tr>";
                                           }
-                                          echo "</tbody></table>";
-                                          echo "</div>";
-                                      }
-                                  } else {
-                                      echo "<p>No grades available for this student.</p>";
-                                  }
-                              }
-                              ?>
-                          </div>
+                                          ?>
+                                                                                </tbody>
+                                                                              </table>
+                                                                          </div>
+                                                                          <div class="text-center">
+                                              <p>Total Students in Year <?php echo $teacherYearLevel; ?>:</p>
+                                              <?php
+                                          $sqlquery = "SELECT count(student_id) AS Total FROM student_registration WHERE yearid = '$teacherYearLevel'";
+                                          if ($result = mysqli_query($conn, $sqlquery)) {
+                                              while ($row = mysqli_fetch_array($result)) {
+                                                  echo "<p>" . $row["Total"] . "</p>";
+                                              }
+                                          }
+                                          ?>
+                                          </div>
+
+                            </div>
+                        </div>
+                      </div>
                     </div>
-                    <!-- /Account -->
-                  </div>  
+                  </div>
                 </div>
               </div>
+
+
+
+              
             </div>
             <!-- / Content -->
 
@@ -276,7 +306,6 @@ $grades_result = mysqli_query($conn, $grades_query);
       <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
-    <!-- / Layout wrapper -->
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
@@ -289,12 +318,13 @@ $grades_result = mysqli_query($conn, $grades_query);
     <!-- endbuild -->
 
     <!-- Vendors JS -->
+    <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
 
     <!-- Main JS -->
     <script src="../assets/js/main.js"></script>
 
     <!-- Page JS -->
-    <script src="../assets/js/pages-account-settings-account.js"></script>
+    <script src="../assets/js/dashboards-analytics.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>

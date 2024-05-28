@@ -19,12 +19,12 @@ if ($row1 = mysqli_fetch_assoc($result1)) {
     $registrarQueue = $row1['Que_no'];
 }
 
-// Function to get the next available queue number
+// Function to get the next available queue number starting from 1001
 function getNextQueueNumber($conn) {
     $sql = "SELECT MAX(Que_no) AS max_que FROM registrar";
     $result = mysqli_query($conn, $sql);
     $row = mysqli_fetch_assoc($result);
-    return $row['max_que'] + 1;
+    return max($row['max_que'] + 1, 1001); // Ensure the next queue number starts from 1001
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -56,7 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     exit; // Ensure that no other code is executed after echoing the message
 }
-?><!DOCTYPE html>
+?>
+<!DOCTYPE html>
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
 <head>
@@ -233,37 +234,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                               </div>
                           </div>
                           <div id="formAuthentication" class="mb-3">
-    <?php if(isset($message)): ?>
-    <p><?php echo $message; ?></p>
-    <?php endif; ?>
-    <!-- Remove the form and replace it with a button -->
-    <button class="btn btn-primary d-grid w-100" onclick="requestQueueNumber()">Request Queue Number</button>
-</div>
+                            <?php if(isset($message)): ?>
+                            <p><?php echo $message; ?></p>
+                            <?php endif; ?>
+                            <!-- Remove the form and replace it with a button -->
+                            <button class="btn btn-primary d-grid w-100" onclick="requestQueueNumber()">Request Queue Number</button>
+                        </div>
 
-<script>
-    function requestQueueNumber() {
-        // Perform AJAX request to PHP script for requesting queue number
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    // Success response
-                    var response = xhr.responseText;
-                    alert(response); // Show response message
-                    window.location.reload(); // Reload the page to update the queue number display
-                } else {
-                    // Error response
-                    alert('Error: ' + xhr.statusText);
-                }
-            }
-        };
+                        <script>
+                            function requestQueueNumber() {
+                                // Perform AJAX request to PHP script for requesting queue number
+                                var xhr = new XMLHttpRequest();
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                                        if (xhr.status === 200) {
+                                            // Success response
+                                            var response = xhr.responseText;
+                                            alert(response); // Show response message
+                                            window.location.reload(); // Reload the page to update the queue number display
+                                        } else {
+                                            // Error response
+                                            alert('Error: ' + xhr.statusText);
+                                        }
+                                    }
+                                };
 
-        // Send POST request to the PHP script
-        xhr.open('POST', '<?php echo $_SERVER['PHP_SELF']; ?>', true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.send();
-    }
-</script>
+                                // Send POST request to the PHP script
+                                xhr.open('POST', '<?php echo $_SERVER['PHP_SELF']; ?>', true);
+                                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                                xhr.send();
+                            }
+                        </script>
 
 
                       </div>
@@ -271,7 +272,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <!-- / Content -->
                     <!-- Footer -->
                     <footer class="content-footer footer bg-footer-theme">
-                    </footer>
+              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                <div class="mb-2 mb-md-0">
+                  ©
+                  <script>
+                    document.write(new Date().getFullYear());
+                  </script>
+                  , made with ❤️ by
+                  <a href="https://www.facebook.com/james.jeager.3" target="_blank" class="footer-link fw-bolder">MeProfile</a>
+                </div>
+                
+              </div>
+            </footer>
                     <!-- / Footer -->
                     <div class="content-backdrop fade"></div>
                 </div>

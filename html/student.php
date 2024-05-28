@@ -165,7 +165,7 @@
                           </div>
                           <div class="flex-grow-1">
                             <span class="fw-semibold d-block"></span>
-                            <small class="text-muted">Admin</small>
+                            <small class="text-muted">Student</small>
                           </div>
                         </div>
                       </a>
@@ -196,10 +196,6 @@
                   
                   <div class="card mb-4">
                     <h5 class="card-header">Profile Details</h5>
-                    <div class="card-header-design">
-                        <h4 class="card-header">My ID is "<?php echo $row['student_id']; ?>"</h4>
-                    </div>
-
                     <!-- Account -->
                     <div class="card-body">
                     <hr class="my-0" />
@@ -268,6 +264,13 @@
                             id="gender" 
                             /><?php echo $row['gender']; ?></p>
                           </div>
+                          <div class="mb-3 col-md-6">
+                            <label for="year" class="form-label">Year Level</label>
+                            <p 
+                            class="form-control" 
+                            id="year" 
+                            /><?php echo $row['yearid']; ?></p>
+                          </div>
                       </form>
                     </div>
                     <!-- /Account -->
@@ -279,7 +282,17 @@
 
             <!-- Footer -->
             <footer class="content-footer footer bg-footer-theme">
-
+              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                <div class="mb-2 mb-md-0">
+                  ©
+                  <script>
+                    document.write(new Date().getFullYear());
+                  </script>
+                  , made with ❤️ by
+                  <a href="https://www.facebook.com/james.jeager.3" target="_blank" class="footer-link fw-bolder">MeProfile</a>
+                </div>
+                
+              </div>
             </footer>
             <!-- / Footer -->
 

@@ -1,13 +1,38 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['isLogin'])) {
-    header('location: choose.php');
-    exit;
+if (!isset($_SESSION["isLogin"])) {
+    header("location: choose.php");
+    exit();
 }
 
-require_once('config.php');
-require 'config.php';
+require_once "config.php";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve and sanitize inputs
+    $id = mysqli_real_escape_string($conn, $_POST["id"]);
+    $fname = mysqli_real_escape_string($conn, $_POST["firstname"]);
+    $lname = mysqli_real_escape_string($conn, $_POST["lastname"]);
+    $address = mysqli_real_escape_string($conn, $_POST["address"]);
+    $gender = mysqli_real_escape_string($conn, $_POST["gender"]);
+    $email = mysqli_real_escape_string($conn, $_POST["email"]);
+    $birthday = mysqli_real_escape_string($conn, $_POST["birthday"]);
+    $phone = mysqli_real_escape_string($conn, $_POST["phone"]);
+    $yearid = mysqli_real_escape_string($conn, $_POST["yearid"]);
+
+    // Prepare insert query
+    $sql = "INSERT INTO student_registration (id, firstname, lastname, address, gender, email, birthday, phone, yearid) 
+            VALUES ('$id', '$fname', '$lname', '$address', '$gender', '$email', '$birthday', '$phone', '$yearid')";
+
+    // Execute query
+    if (mysqli_query($conn, $sql)) {
+        echo "<script>alert('Added Successfully');</script>";
+        header("location: index.php");
+        exit();
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+}
 ?>
 <!DOCTYPE html>
 
@@ -270,6 +295,16 @@ require 'config.php';
                                   </div>
                                 </div>
                               </div>
+                              <div class="mb-3 col-md-6">
+                                <label for="yearid" class="form-label">Login As</label>
+                                <select class="form-select" id="yearid" name="yearid">
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                            </div>
+                              
                               <div class="mt-1 p-2" style="justify-content: space-between; display: flex;">
                                 <button type="submit" class="btn btn-primary">Save changes</button>
                                 <button type="reset" class="btn btn-danger">Clear</button>
@@ -339,25 +374,3 @@ require 'config.php';
     <script async defer src="https://buttons.github.io/buttons.js"></script>
   </body>
 </html>
-<?php
-if($_SERVER['REQUEST_METHOD'] == "POST") {
-  $id = $_POST['id'];
-  $fname = $_POST['firstname'];
-  $lname = $_POST['lastname'];
-  $address = $_POST['address'];
-  $gender = $_POST['gender'];
-  $email = $_POST['email'];
-  $birthday = $_POST['birthday'];
-  $username = $_POST['username'];
-  $password = $_POST['password'];
-  $phone = $_POST['phone'];
-
-  $sql = "INSERT INTO student_registration VALUES (null, '$id', '$fname', '$lname', '$address', '$gender', '$email', '$birthday', '$username', '$password', '$phone')";
-
-  if(mysqli_query($conn, $sql)) {
-    echo "<script>alert('Added Succesfully');
-    window.location.href='auth-login-basic.php';
-    </script>";
-  }
-}
-?>

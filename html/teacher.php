@@ -1,26 +1,21 @@
 <?php
-session_start();
+    session_start();
 
-if (!isset($_SESSION['Login'])) {
-    header('location: choose.php');
-    exit;
-}
-require_once('config.php');
+    if (!isset($_SESSION['Login'])) {
+        header('location: choose.php');
+        exit;
+    }
+    require_once('config.php');
 
-$student_id = $_SESSION['Login'];
 
-// Fetch student information
-$student_query = "SELECT * FROM student_registration WHERE student_id = '$student_id'";
-$student_result = mysqli_query($conn, $student_query);
-$student_data = mysqli_fetch_assoc($student_result);
+    $teacher = $_SESSION['Login'];
 
-// Fetch grades for the student
-$grades_query = "SELECT subject.subname, subject.yearid, grades.grades 
-                 FROM grades 
-                 JOIN subject ON grades.subid = subject.subid 
-                 WHERE grades.student_id = '$student_id'
-                 ORDER BY subject.yearid ASC";
-$grades_result = mysqli_query($conn, $grades_query);
+    $sql = "SELECT * FROM teacher_registration WHERE teacher_id = '$teacher'";
+    $count = 1;
+
+    if ($result = mysqli_query($conn, $sql)) {
+        while ($row = mysqli_fetch_assoc($result)) {
+           
 ?>
 <!DOCTYPE html>
 <!-- beautify ignore:start -->
@@ -39,7 +34,7 @@ $grades_result = mysqli_query($conn, $grades_query);
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Grades</title>
+    <title>Account</title>
 
     <meta name="description" content="" />
 
@@ -103,29 +98,24 @@ $grades_result = mysqli_query($conn, $grades_query);
                 <div class="menu-inner-shadow"></div>
                 <ul class="menu-inner py-1">
                     <!-- Profile -->
-                    <li class="menu-item">
+                    <li class="menu-item active">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-user-circle"></i>
                             <div data-i18n="Layouts">Me</div>
                         </a>
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="student.php" class="menu-link">
+                                <a href="teacher.php" class="menu-link">
                                     <div data-i18n="Without menu">Profile</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="pages-account-settings-account.php" class="menu-link">
-                                    <div data-i18n="Without menu">Que Number</div>
                                 </a>
                             </li>
                         </ul>
                     </li>
                     <!-- Request -->
-                    <li class="menu-item active">
-                        <a href="request.php" class="menu-link">
+                    <li class="menu-item">
+                        <a href="list_student.php" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-add-to-queue"></i>
-                            <div data-i18n="Analytics">Grades</div>
+                            <div data-i18n="Analytics">Students</div>
                         </a>
                     </li>
             </aside>
@@ -156,7 +146,7 @@ $grades_result = mysqli_query($conn, $grades_query);
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                      <img src="../assets/img/avatars/profile.png" alts class="w-px-40 h-auto rounded-circle" />
+                      <img src="../assets/img/avatars/user.png" alts class="w-px-40 h-auto rounded-circle" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -165,12 +155,12 @@ $grades_result = mysqli_query($conn, $grades_query);
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-                              <img src="../assets/img/avatars/profile.png" alt class="w-px-40 h-auto rounded-circle" />
+                              <img src="../assets/img/avatars/user.png" alt class="w-px-40 h-auto rounded-circle" />
                             </div>
                           </div>
                           <div class="flex-grow-1">
                             <span class="fw-semibold d-block"></span>
-                            <small class="text-muted">Admin</small>
+                            <small class="text-muted">Teacher</small>
                           </div>
                         </div>
                       </a>
@@ -200,7 +190,7 @@ $grades_result = mysqli_query($conn, $grades_query);
                 <div class="col-md-12">
                   
                   <div class="card mb-4">
-                    <h5 class="card-header">Grades Details</h5>
+                    <h5 class="card-header">Profile Details</h5>
 
                     <!-- Account -->
                     <div class="card-body">
@@ -208,40 +198,76 @@ $grades_result = mysqli_query($conn, $grades_query);
 
                     <!-- Form -->
                     <div class="card-body">
-                      <div class="grades-display">
-                              <h2>Current Grades</h2>
-                              <?php
-                              if (isset($student_id)) {
-                                  $sqlquery = "SELECT subject.subname, subject.yearid, grades.grades 
-                                               FROM grades 
-                                               JOIN subject ON grades.subid = subject.subid 
-                                               WHERE grades.student_id = '$student_id'
-                                               ORDER BY subject.yearid ASC";
-                                  $results = mysqli_query($conn, $sqlquery);
-                                  if (mysqli_num_rows($results) > 0) {
-                                      $grades_by_year = [];
-                                      while ($row = mysqli_fetch_assoc($results)) {
-                                          $grades_by_year[$row['yearid']][] = $row;
-                                      }
-
-                                      foreach ($grades_by_year as $year => $grades) {
-                                          echo "<div class='year-section'>";
-                                          echo "<h3>Year Level: " . htmlspecialchars($year) . "</h3>";
-                                          echo "<table class='table'>";
-                                          echo "<thead><tr><th>Subject</th><th>Grade</th></tr></thead>";
-                                          echo "<tbody>";
-                                          foreach ($grades as $grade) {
-                                              echo "<tr><td>" . htmlspecialchars($grade['subname']) . "</td><td>" . htmlspecialchars($grade['grades']) . "</td></tr>";
-                                          }
-                                          echo "</tbody></table>";
-                                          echo "</div>";
-                                      }
-                                  } else {
-                                      echo "<p>No grades available for this student.</p>";
-                                  }
-                              }
-                              ?>
+                      <form action="#" class="form-control" id="formAccountSettings" method="POST">
+                        <div class="row">
+                          <div class="mb-3 col-md-6">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <p
+                              class="form-control"
+                              id="firstName"
+                              autofocus
+                            /><?php echo $row['firstname']; ?></p>
                           </div>
+                          <div class="mb-3 col-md-6">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <p 
+                              class="form-control" 
+                              id="lastName" 
+                            /><?php echo $row['lastname']; ?></p>
+                          </div>
+                          <div class="mb-3 col-md-6">
+                            <label for="id" class="form-label">Student ID</label>
+                            <p
+                              class="form-control"
+                              id="id"
+                            /><?php echo $row['id']; ?></p>
+                          </div>
+                          <div class="mb-3 col-md-6">
+                            <label class="form-label" for="phoneNumber">Phone Number</label>
+                            <div class="input-group input-group-merge">
+                              <p class="input-group-text">PH</p>
+                              <p
+                                id="phoneNumber"
+                                class="form-control"
+                              /><?php echo $row['phone']; ?></p>
+                            </div>
+                          </div>
+                          <div class="mb-3 col-md-6">
+                            <label for="email" class="form-label">E-mail</label>
+                            <p
+                              class="form-control"
+                              id="email"
+                            /><?php echo $row['email']; ?></p>
+                          </div>
+                          <div class="mb-3 col-md-6">
+                            <label for="organization" class="form-label">Birth Date</label>
+                            <p
+                              class="form-control"
+                              id="organization"
+                            /><?php echo $row['birthday']; ?></p>
+                          </div>
+                          <div class="mb-3 col-md-6">
+                            <label for="address" class="form-label">Address</label>
+                            <p 
+                            class="form-control" 
+                            id="address" 
+                            /><?php echo $row['address']; ?></p>
+                          </div>
+                          <div class="mb-3 col-md-6">
+                            <label for="gender" class="form-label">Gender</label>
+                            <p 
+                            class="form-control" 
+                            id="gender" 
+                            /><?php echo $row['gender']; ?></p>
+                          </div>
+                          <div class="mb-3 col-md-6">
+                            <label for="year" class="form-label">Year Level</label>
+                            <p 
+                            class="form-control" 
+                            id="year" 
+                            /><?php echo $row['yearid']; ?></p>
+                          </div>
+                      </form>
                     </div>
                     <!-- /Account -->
                   </div>  
@@ -300,3 +326,7 @@ $grades_result = mysqli_query($conn, $grades_query);
     <script async defer src="https://buttons.github.io/buttons.js"></script>
   </body>
 </html>
+<?php
+    }
+}
+?>

@@ -1,43 +1,60 @@
 <?php
 session_start();
-require_once('config.php');
+require_once "config.php";
 
 // Check if the form is submitted
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if login type is selected
-    if (isset($_POST['login_type'])) {
+    if (isset($_POST["login_type"])) {
         // Student login
-        if ($_POST['login_type'] == 'student') {
-            $email = $_POST['email'] ?? '';
-            $id = $_POST['password'] ?? ''; // Change this to match the student ID field name
+        if ($_POST["login_type"] == "student") {
+            $email = $_POST["email"] ?? "";
+            $id = $_POST["password"] ?? ""; // Change this to match the student ID field name
 
             $sql = "SELECT * FROM student_registration WHERE email='$email' AND id='$id'";
             $result = mysqli_query($conn, $sql);
 
             if ($result && mysqli_num_rows($result) > 0) {
                 $student = mysqli_fetch_assoc($result);
-                $_SESSION['Login'] = $student['student_id'];
-                header('Location: student.php'); 
+                $_SESSION["Login"] = $student["student_id"];
+                header("Location: student.php");
                 exit();
             } else {
-                $errmsg = 'Username or Password is invalid!';
+                $errmsg = "Username or Password is invalid!";
+            }
+        }
+        // Teacher login
+        elseif ($_POST["login_type"] == "teacher") {
+            $email = $_POST["email"] ?? "";
+            $id = $_POST["password"] ?? "";
+
+            $sql = "SELECT * FROM teacher_registration WHERE email='$email' AND id='$id'";
+            $result = mysqli_query($conn, $sql);
+
+            if ($result && mysqli_num_rows($result) > 0) {
+                $teacher = mysqli_fetch_assoc($result);
+                $_SESSION["Login"] = $teacher["teacher_id"];
+                header("Location: teacher.php");
+                exit();
+            } else {
+                $errmsg = "Email or Password is invalid!";
             }
         }
         // Admin login
-        elseif ($_POST['login_type'] == 'admin') {
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
+        elseif ($_POST["login_type"] == "admin") {
+            $email = $_POST["email"] ?? "";
+            $password = $_POST["password"] ?? "";
 
             $sql = "SELECT * FROM admin WHERE email='$email' AND password='$password'";
             $result = mysqli_query($conn, $sql);
 
             if ($result && mysqli_num_rows($result) > 0) {
                 $admin = mysqli_fetch_assoc($result);
-                $_SESSION['isLogin'] = $admin['id'];
-                header('Location: index.php'); 
+                $_SESSION["isLogin"] = $admin["id"];
+                header("Location: index.php");
                 exit();
             } else {
-                $errmsg = 'Email or Password is invalid!';
+                $errmsg = "Email or Password is invalid!";
             }
         }
     }
@@ -105,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                                 <label for="login_type" class="form-label">Login As</label>
                                 <select class="form-select" id="login_type" name="login_type">
                                     <option value="student">Student</option>
+                                    <option value="teacher">Teacher</option>
                                     <option value="admin">Admin</option>
                                 </select>
                             </div>

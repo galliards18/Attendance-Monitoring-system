@@ -89,7 +89,7 @@
   <div class="container">
     <div class="card">
       <center>
-        <h5 class="card-header">Queuing System</h5>
+        <h5 class="card-header">Final Project System</h5>
       </center>
       <table class="table">
         <tbody>
