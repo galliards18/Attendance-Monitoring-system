@@ -1,9 +1,32 @@
 <?php
 session_start();
 
+<<<<<<< HEAD
 if (!isset($_SESSION['isLogin'])) {
     header('location: choose.php');
     exit;
+=======
+    if (!isset($_SESSION['isLogin'])) {
+        header('location: choose.php');
+        exit;
+    }
+
+  require_once('config.php');
+
+$student_id = $yearid = $subid = $grades =  "";
+
+$student_id = $_GET['student_id'];
+$subid = isset($_GET['subid']) ? $_GET['subid'] : null;
+
+$sql = "SELECT * FROM grades WHERE student_id='$student_id' AND subid='$subid'";
+
+if ($results = mysqli_query($conn, $sql)) {
+    // Assuming you're fetching multiple rows of grades for the same student and subject
+    while ($data = mysqli_fetch_assoc($results)) {
+        $gradesid = $data['gradesid'];
+        // Do something with the grades data
+    }
+>>>>>>> 4ae5e145384c09f9378cafffe78a0f78da6985c3
 }
 
 
@@ -251,5 +274,10 @@ if ($results = mysqli_query($conn, $sql)) {
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/pages-account-settings-account.js"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+<<<<<<< HEAD
 </body>
 </html>
+=======
+  </body>
+</html>
+>>>>>>> 4ae5e145384c09f9378cafffe78a0f78da6985c3
