@@ -1,22 +1,19 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["isLogin"])) {
-    header("location: choose.php");
-    exit();
+if (!isset($_SESSION['isLogin'])) {
+    header('location: choose.php');
+    exit;
 }
 
-require_once "config.php";
+require_once('config.php');
 
-function sanitize($data)
-{
+function sanitize($data) {
     return htmlspecialchars(strip_tags($data));
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $firstnameFilter = isset($_GET["firstname"])
-        ? sanitize($_GET["firstname"])
-        : "";
+if ($_SERVER['REQUEST_METHOD'] == "GET") {
+    $firstnameFilter = isset($_GET['firstname']) ? sanitize($_GET['firstname']) : '';
 
     $sqlquery = "SELECT * FROM student_registration WHERE 1";
 
@@ -203,8 +200,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                         <button type="submit" class="btn btn-primary mt-2">Search</button>
                                     </center>
                                 </form>
-                                <h1 class="text-center mb-4 student-enrolle"><a href="auth-register-basic.php">Student Enrolled</a></h1>
-                                <?php if (isset($totalItems)): ?>
+                                <h1 class="text-center mb-4 student-enrolle"><a href="auth-register-basic.php">Enrolled Student</a></h1>
+                                <?php if (isset($totalItems)) : ?>
                                     <p class="text-center">Total Items Found: <?php echo $totalItems; ?></p>
                                 <?php endif; ?>
                                 <div class="table-responsive">
@@ -227,46 +224,20 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                           <?php
                                           $count = 1;
                                           if (mysqli_num_rows($result) > 0) {
-                                              while (
-                                                  $row = mysqli_fetch_array(
-                                                      $result
-                                                  )
-                                              ) {
+                                              while ($row = mysqli_fetch_array($result)) {
                                                   echo "<tr>";
-                                                  echo "<td>" .
-                                                      $row["id"] .
-                                                      "</td>";
-                                                  echo "<td>" .
-                                                      $row["firstname"] .
-                                                      "</td>";
-                                                  echo "<td>" .
-                                                      $row["lastname"] .
-                                                      "</td>";
-                                                  echo "<td>" .
-                                                      $row["address"] .
-                                                      "</td>";
-                                                  echo "<td>" .
-                                                      $row["gender"] .
-                                                      "</td>";
-                                                  echo "<td>" .
-                                                      $row["email"] .
-                                                      "</td>";
-                                                  echo "<td>" .
-                                                      $row["birthday"] .
-                                                      "</td>";
-                                                  echo "<td>" .
-                                                      $row["phone"] .
-                                                      "</td>";
-                                                  echo "<td>" .
-                                                      $row["yearid"] .
-                                                      "</td>";
+                                                  echo "<td>". $row['id'] ."</td>";
+                                                  echo "<td>". $row['firstname'] ."</td>";
+                                                  echo "<td>". $row['lastname'] ."</td>";
+                                                  echo "<td>". $row['address'] ."</td>";
+                                                  echo "<td>". $row['gender'] ."</td>";
+                                                  echo "<td>". $row['email'] ."</td>";
+                                                  echo "<td>". $row['birthday'] ."</td>";
+                                                  echo "<td>". $row['phone'] ."</td>";
+                                                  echo "<td>". $row['yearid'] ."</td>";
                                                   echo "<td class='action-icons'>";
-                                                  echo "<a href='view.php?student_id=" .
-                                                      $row["student_id"] .
-                                                      "'><i class='menu-icon tf-icons bx bx-show'></i></a>";
-                                                  echo "<a onclick=\"return confirm('Are you sure?')\" href='Delete.php?student_id=" .
-                                                      $row["student_id"] .
-                                                      "'><i class='menu-icon tf-icons bx bx-trash'></i></a>";
+                                                  echo "<a href='view.php?student_id=". $row['student_id'] ."'><i class='menu-icon tf-icons bx bx-show'></i></a>";
+                                                  echo "<a onclick=\"return confirm('Are you sure?')\" href='Delete.php?student_id=". $row['student_id'] ."'><i class='menu-icon tf-icons bx bx-trash'></i></a>";
                                                   echo "</td>";
                                                   echo "</tr>";
                                               }
@@ -280,20 +251,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                                 <div class="text-center">
                                     <p>Total Student:</p>
                                     <?php
-                                    $sqlquery =
-                                        "SELECT count(student_id) AS Total FROM student_registration";
-                                    if (
-                                        $result = mysqli_query($conn, $sqlquery)
-                                    ) {
-                                        while (
-                                            $row = mysqli_fetch_array($result)
-                                        ) {
-                                            echo "<p>" . $row["Total"] . "</p>";
+                                    $sqlquery = "SELECT count(student_id) AS Total FROM student_registration";
+                                    if ($result = mysqli_query($conn, $sqlquery)) {
+                                        while ($row = mysqli_fetch_array($result)) {
+                                            echo "<p>".$row['Total']."</p>";
                                         }
                                     }
                                     ?>
                                 </div>
-                                <button class="btn btn-warning mt-2"><a href="auth-register-basic.php">Add New Student</a></button>
+                                <button class="btn btn-secondary mt-2"><a href="auth-register-basic.php">Add New Student</a></button>
                             </div>
                         </div>
                       </div>

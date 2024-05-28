@@ -10,23 +10,7 @@ require_once('config.php');
 
 $student_id = $_SESSION['Login'];
 
-$sql1 = "SELECT Que_no FROM registrar WHERE IsActive = 1 AND student_id = $student_id ORDER BY Que_no ASC LIMIT 1";
-
-$registrarQueue = "----"; // Default queue numbers if not found
-
-$result1 = mysqli_query($conn, $sql1);
-if ($row1 = mysqli_fetch_assoc($result1)) {
-    $registrarQueue = $row1['Que_no'];
-}
-
-<<<<<<< HEAD
 // Function to get the next available queue number starting from 1001
-function getNextQueueNumber($conn) {
-    $sql = "SELECT MAX(Que_no) AS max_que FROM registrar";
-    $result = mysqli_query($conn, $sql);
-    $row = mysqli_fetch_assoc($result);
-    return max($row['max_que'] + 1, 1001); // Ensure the next queue number starts from 1001
-=======
 function getNextQueueNumber($conn) {
     $currentDate = date("Y-m-d");
     $minQue = 1001;
@@ -42,11 +26,17 @@ function getNextQueueNumber($conn) {
     }
 
     return min($next_que, $maxQue);
->>>>>>> 4ae5e145384c09f9378cafffe78a0f78da6985c3
+}
+
+$sql1 = "SELECT Que_no FROM registrar WHERE IsActive = 1 AND student_id = $student_id ORDER BY Que_no ASC LIMIT 1";
+$registrarQueue = "----"; // Default queue number if not found
+
+$result1 = mysqli_query($conn, $sql1);
+if ($row1 = mysqli_fetch_assoc($result1)) {
+    $registrarQueue = $row1['Que_no'];
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $student_id = $_SESSION['Login']; // Fetching student ID from session
     $student_fullname = substr($_POST['student_name'] ?? '', 0, 100);
     $department = 'registrar'; // Set the department to 'registrar'
 
@@ -55,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        echo "<script>alert('You already have an active request for this department. Please wait for your turn.'); window.location.href='request.php';</script>";
+        echo "<script>alert('You already have an active request for this department. Please wait for your turn.'); window.location.href='pages-account-settings-account.php';</script>";
     } else {
         $que_no = getNextQueueNumber($conn);
         $currentDate = date("Y-m-d");
@@ -68,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         } else {
             $error_message = addslashes($stmt->error); // Escape special characters
-            echo "<script>alert('Error: $error_message'); window.location.href='request.php';</script>";
+            echo "<script>alert('Error: $error_message'); window.location.href='student.php';</script>";
         }
 
         $stmt->close();
@@ -77,7 +67,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
@@ -100,25 +89,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Page CSS -->
     <!-- Helpers -->
     <script src="../assets/vendor/js/helpers.js"></script>
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <!-- Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <script src="../assets/js/config.js"></script>
     <style>
         .queue-numbers {
             display: flex;
             align-items: center;
         }
-
         .queue-item {
             margin-right: 40px;
             display: flex;
             align-items: center;
         }
-
         .queue-item span {
             margin-right: 20px;
         }
-
         .queue-number {
             color: #007bff;
             font-size: 40px;
@@ -126,7 +111,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </style>
 </head>
-
 <body>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
@@ -167,11 +151,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </li>
                     <!-- Request -->
                     <li class="menu-item">
-                        <a href="grades.php" class="menu-link">
+                        <a href="request.php" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-add-to-queue"></i>
                             <div data-i18n="Analytics">Grades</div>
                         </a>
                     </li>
+                </ul>
             </aside>
             <!-- / Menu -->
             <!-- Layout container -->
@@ -188,12 +173,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <p style="font-size: 18px; padding-top: 15px;"><b>Southern Leyte State University</b></p>
                         </center>
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
-                            <!-- Place this tag where you want the button to render. -->
                             <!-- User -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="../assets/img/avatars/profile.png" alts class="w-px-40 h-auto rounded-circle" />
+                                        <img src="../assets/img/avatars/profile.png" alt class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
@@ -206,11 +190,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-semibold d-block"></span>
+                                                    <span class="fw-semibold d-block">STUDENT</span>
                                                     <small class="text-muted">Student</small>
                                                 </div>
                                             </div>
                                         </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="request.php">
+                                            <i class="bx bx-cog me-2"></i>
+                                            <span class="align-middle">Request Que Number</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="logout.php">
@@ -230,162 +223,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <!-- Content -->
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
-<<<<<<< HEAD
-                          <div class="col-md-12">
-                              <div class="card mb-4">
-                                  <h5 class="card-header">Active Queue</h5>
-                                  <!-- Account -->
-                                  <div class="card-body">
-                                      <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-5">
-                                          <div>
-                                              <img src="../assets/img/avatars/profile.png" alt="user-avatar" class="d-block" height="100" width="100" id="uploadedAvatar" style="border-radius: 50px;" />
-                                          </div>
-                                          <br>
-                                          <div class="queue-numbers">
-                                              <div class="queue-item">
-                                                  <span class="d-block d-md-inline-block mb-md-2">Registrar:</span>
-                                                  <span class="queue-number"><?php echo $registrarQueue; ?></span>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div id="formAuthentication" class="mb-3">
-                            <?php if(isset($message)): ?>
-                            <p><?php echo $message; ?></p>
-                            <?php endif; ?>
-                            <!-- Remove the form and replace it with a button -->
-                            <button class="btn btn-primary d-grid w-100" onclick="requestQueueNumber()">Request Queue Number</button>
-                        </div>
-
-                        <script>
-                            function requestQueueNumber() {
-                                // Perform AJAX request to PHP script for requesting queue number
-                                var xhr = new XMLHttpRequest();
-                                xhr.onreadystatechange = function() {
-                                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                                        if (xhr.status === 200) {
-                                            // Success response
-                                            var response = xhr.responseText;
-                                            alert(response); // Show response message
-                                            window.location.reload(); // Reload the page to update the queue number display
-                                        } else {
-                                            // Error response
-                                            alert('Error: ' + xhr.statusText);
-                                        }
-                                    }
-                                };
-
-                                // Send POST request to the PHP script
-                                xhr.open('POST', '<?php echo $_SERVER['PHP_SELF']; ?>', true);
-                                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                                xhr.send();
-                            }
-                        </script>
-
-
-                      </div>
-
-                    <!-- / Content -->
-                    <!-- Footer -->
-                    <footer class="content-footer footer bg-footer-theme">
-              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
-                <div class="mb-2 mb-md-0">
-                  ©
-                  <script>
-                    document.write(new Date().getFullYear());
-                  </script>
-                  , made with ❤️ by
-                  <a href="https://www.facebook.com/james.jeager.3" target="_blank" class="footer-link fw-bolder">MeProfile</a>
-                </div>
-                
-              </div>
-            </footer>
-                    <!-- / Footer -->
-                    <div class="content-backdrop fade"></div>
-=======
                             <div class="col-md-12">
                                 <div class="card mb-4">
-                                    <h5 class="card-header">Active Queue</h5>
-                                    <!-- Account -->
+                                    <h5 class="card-header">Queue Number</h5>
                                     <div class="card-body">
-                                        <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-5">
-                                            <div>
-                                                <img src="../assets/img/avatars/profile.png" alt="user-avatar" class="d-block" height="100" width="100" id="uploadedAvatar" style="border-radius: 50px;" />
+                                        <div style="border-radius: 50px;" class="d-flex align-items-start align-items-sm-center gap-4">
+                                            <img src="../assets/img/avatars/profile.png" alt="user-avatar"  height="100" width="100" id="uploadedAvatar" style="border-radius: 50px;" />
+
+                                            <div class="button-wrapper">
+                                                <form id="formAccountSettings" method="POST">
+                                                    
+                                                    <div class="mt-2">
+                                                        <button type="submit" class="btn btn-primary me-2">Reserve Queue Number</button>
+                                                        <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+                                                    </div>
+                                                </form>
                                             </div>
-                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="card mb-4">
+                                        <h5 class="card-header">Queue Number</h5>
+                                        <div class="card-body">
                                             <div class="queue-numbers">
                                                 <div class="queue-item">
-                                                    <span class="d-block d-md-inline-block mb-md-2">Registrar:</span>
-                                                    <span class="queue-number"><?php echo $registrarQueue; ?></span>
+                                                    <span>Registrar</span>
+                                                    <span class="queue-number"><?= $registrarQueue ?></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div id="formAuthentication" class="mb-3"> <?php if(isset($message)): ?> <p><?php echo $message; ?></p> <?php endif; ?>
-                                <!-- Remove the form and replace it with a button -->
-                                <button class="btn btn-primary d-grid w-100" onclick="requestQueueNumber()">Request Queue Number</button>
-                                <script>
-                                function requestQueueNumber() {
-                                    // Perform AJAX request to PHP script for requesting queue number
-                                    var xhr = new XMLHttpRequest();
-                                    xhr.onreadystatechange = function() {
-                                        if (xhr.readyState === XMLHttpRequest.DONE) {
-                                            if (xhr.status === 200) {
-                                                // Success response
-                                                var response = xhr.responseText;
-                                                alert(response); // Show response message
-                                                window.location.reload(); // Reload the page to update the queue number display
-                                            } else {
-                                                // Error response
-                                                alert('Error: ' + xhr.statusText);
-                                            }
-                                        }
-                                    };
-
-                                    // Send POST request to the PHP script
-                                    xhr.open('POST', '<?php echo $_SERVER['PHP_SELF']; ?>', true);
-                                    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                                    xhr.send();
-                                }
-                            </script>
-                            </div>
                         </div>
-                        <!-- / Content -->
-                        <!-- Footer -->
-                        <footer class="content-footer footer bg-footer-theme">
-                        </footer>
-                        <!-- / Footer -->
-                        <div class="content-backdrop fade"></div>
                     </div>
-                    <!-- Content wrapper -->
->>>>>>> 4ae5e145384c09f9378cafffe78a0f78da6985c3
+                    <!-- / Content -->
                 </div>
-                <!-- / Layout page -->
+                <!-- Content wrapper -->
             </div>
-            <!-- Overlay -->
-            <div class="layout-overlay layout-menu-toggle"></div>
+            <!-- / Layout container -->
         </div>
         <!-- / Layout wrapper -->
         <!-- Core JS -->
-        <!-- build:js assets/vendor/js/core.js -->
         <script src="../assets/vendor/libs/jquery/jquery.js"></script>
         <script src="../assets/vendor/libs/popper/popper.js"></script>
         <script src="../assets/vendor/js/bootstrap.js"></script>
         <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
         <script src="../assets/vendor/js/menu.js"></script>
-        <!-- endbuild -->
-        <!-- Vendors JS -->
         <!-- Main JS -->
         <script src="../assets/js/main.js"></script>
         <!-- Page JS -->
         <script src="../assets/js/pages-account-settings-account.js"></script>
-        <!-- Place this tag in your head or just before your close body tag. -->
-        <script async defer src="https://buttons.github.io/buttons.js"></script>
+    </div>
 </body>
-
 </html>
-                            

@@ -200,52 +200,54 @@ $grades_result = mysqli_query($conn, $grades_query);
                 <div class="col-md-12">
                   
                   <div class="card mb-4">
-                    <h5 class="card-header">Grades Details</h5>
+    <h5 class="card-header">Grades Details</h5>
+    <div class="card-body">
+        <hr class="my-0" />
+        <div class="card-body">
+            <div class="grades-display">
+                <h2>Current Grades</h2>
+                <?php
+                if (isset($student_id)) {
+                    $sqlquery = "SELECT subject.subname, subject.yearid, grades.grades 
+                                 FROM grades 
+                                 JOIN subject ON grades.subid = subject.subid 
+                                 WHERE grades.student_id = '$student_id'
+                                 ORDER BY subject.yearid ASC";
+                    $results = mysqli_query($conn, $sqlquery);
+                    if (mysqli_num_rows($results) > 0) {
+                        $grades_by_year = [];
+                        while ($row = mysqli_fetch_assoc($results)) {
+                            $grades_by_year[$row['yearid']][] = $row;
+                        }
 
-                    <!-- Account -->
-                    <div class="card-body">
-                    <hr class="my-0" />
+                        foreach ($grades_by_year as $year => $grades) {
+                            echo "<div class='year-section'>";
+                            echo "<h3>Year Level: " . htmlspecialchars($year) . "</h3>";
+                            echo "<table class='table'>";
+                            echo "<thead><tr><th>Subject</th><th>Grade</th></tr></thead>";
+                            echo "<tbody>";
+                            $total_grade = 0;
+                            $count_grade = 0;
+                            foreach ($grades as $grade) {
+                                echo "<tr><td>" . htmlspecialchars($grade['subname']) . "</td><td>" . htmlspecialchars($grade['grades']) . "</td></tr>";
+                                $total_grade += $grade['grades'];
+                                $count_grade++;
+                            }
+                            $average_grade = $count_grade > 0 ? $total_grade / $count_grade : 0;
+                            echo "<tr><td><b>Average Grade</b></td><td>" . number_format($average_grade, 2) . "</td></tr>";
+                            echo "</tbody></table>";
+                            echo "</div>";
+                        }
+                    } else {
+                        echo "<p>No grades available for this student.</p>";
+                    }
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
 
-                    <!-- Form -->
-                    <div class="card-body">
-                      <div class="grades-display">
-                              <h2>Current Grades</h2>
-                              <?php
-                              if (isset($student_id)) {
-                                  $sqlquery = "SELECT subject.subname, subject.yearid, grades.grades 
-                                               FROM grades 
-                                               JOIN subject ON grades.subid = subject.subid 
-                                               WHERE grades.student_id = '$student_id'
-                                               ORDER BY subject.yearid ASC";
-                                  $results = mysqli_query($conn, $sqlquery);
-                                  if (mysqli_num_rows($results) > 0) {
-                                      $grades_by_year = [];
-                                      while ($row = mysqli_fetch_assoc($results)) {
-                                          $grades_by_year[$row['yearid']][] = $row;
-                                      }
-
-                                      foreach ($grades_by_year as $year => $grades) {
-                                          echo "<div class='year-section'>";
-                                          echo "<h3>Year Level: " . htmlspecialchars($year) . "</h3>";
-                                          echo "<table class='table'>";
-                                          echo "<thead><tr><th>Subject</th><th>Grade</th></tr></thead>";
-                                          echo "<tbody>";
-                                          foreach ($grades as $grade) {
-                                              echo "<tr><td>" . htmlspecialchars($grade['subname']) . "</td><td>" . htmlspecialchars($grade['grades']) . "</td></tr>";
-                                          }
-                                          echo "</tbody></table>";
-                                          echo "</div>";
-                                      }
-                                  } else {
-                                      echo "<p>No grades available for this student.</p>";
-                                  }
-                              }
-                              ?>
-                          </div>
-                    </div>
-                    <!-- /Account -->
-                  </div>  
-                </div>
               </div>
             </div>
             <!-- / Content -->

@@ -241,8 +241,8 @@ endif; ?>
                                                   echo "<td>" . $row["birthday"] . "</td>";
                                                   echo "<td>" . $row["phone"] . "</td>";
                                                   echo "<td class='action-icons'>";
-                                                  echo "<a href='view.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-show'></i></a>";
-                                                  echo "<a href='grade.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-book-content'></i></a>";
+                                                  echo "<a href='view_2.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-show'></i></a>";
+                                                  echo "<a href='grades.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-book-content'></i></a>";
                                                   echo "<a onclick=\"return confirm('Are you sure?')\" href='Delete.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-trash'></i></a>";
                                                   echo "</td>";
                                                   echo "</tr>";

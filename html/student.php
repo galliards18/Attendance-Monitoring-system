@@ -118,7 +118,7 @@
                     </li>
                     <!-- Request -->
                     <li class="menu-item">
-                        <a href="grades.php" class="menu-link">
+                        <a href="request.php" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-add-to-queue"></i>
                             <div data-i18n="Analytics">Grades</div>
                         </a>
