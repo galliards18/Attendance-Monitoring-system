@@ -1,5 +1,5 @@
 <?php
-include '../config.php';
+include '../../config.php';
 
 $sql = "SELECT MAX(Que_no) AS max_que, Date FROM registrar";
 $result = $conn->query($sql);

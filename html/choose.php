@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($result && mysqli_num_rows($result) > 0) {
                 $student = mysqli_fetch_assoc($result);
                 $_SESSION["Login"] = $student["student_id"];
-                header("Location: student.php");
+                header("Location: student/request_que.php");
                 exit();
             } else {
                 $errmsg = "Username or Password is invalid!";
@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($result && mysqli_num_rows($result) > 0) {
                 $teacher = mysqli_fetch_assoc($result);
                 $_SESSION["Login"] = $teacher["teacher_id"];
-                header("Location: teacher.php");
+                header("Location: teacher/teacher.php");
                 exit();
             } else {
                 $errmsg = "Email or Password is invalid!";
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($result && mysqli_num_rows($result) > 0) {
                 $admin = mysqli_fetch_assoc($result);
                 $_SESSION["isLogin"] = $admin["id"];
-                header("Location: index.php");
+                header("Location: admin/registrar/registrar.php");
                 exit();
             } else {
                 $errmsg = "Email or Password is invalid!";

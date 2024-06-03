@@ -1,43 +1,18 @@
 <?php
 session_start();
 
-<<<<<<< HEAD
 if (!isset($_SESSION['isLogin'])) {
     header('location: choose.php');
     exit;
-=======
-    if (!isset($_SESSION['isLogin'])) {
-        header('location: choose.php');
-        exit;
-    }
-
-  require_once('config.php');
-
-$student_id = $yearid = $subid = $grades =  "";
-
-$student_id = $_GET['student_id'];
-$subid = isset($_GET['subid']) ? $_GET['subid'] : null;
-
-$sql = "SELECT * FROM grades WHERE student_id='$student_id' AND subid='$subid'";
-
-if ($results = mysqli_query($conn, $sql)) {
-    // Assuming you're fetching multiple rows of grades for the same student and subject
-    while ($data = mysqli_fetch_assoc($results)) {
-        $gradesid = $data['gradesid'];
-        // Do something with the grades data
-    }
->>>>>>> 4ae5e145384c09f9378cafffe78a0f78da6985c3
 }
 
+require_once('../config.php');
 
-require_once('config.php');
+$id = $firstname = $lastname = $address = $gender = $email = $birthday = $phone = $yearid = "";
 
-$student_id = $yearid = $subid = $grades =  "";
-$student_id = $_GET['student_id'];
-$subid = isset($_GET['subid']) ? $_GET['subid'] : null;
+$teacher_id = $_GET['teacher_id'];
 
-// Fetch student information
-$sql = "SELECT * FROM student_registration WHERE student_id='$student_id'";
+$sql = "SELECT * FROM teacher_registration WHERE teacher_id='$teacher_id'";
 if ($results = mysqli_query($conn, $sql)) {
     $data = mysqli_fetch_assoc($results);
     $id = $data['id'];
@@ -52,23 +27,23 @@ if ($results = mysqli_query($conn, $sql)) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../../assets/" data-template="vertical-menu-template-free">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-    <title>Dashboard</title>
+    <title>View Teacher Profile</title>
     <meta name="description" content="" />
     <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
-    <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="../assets/css/demo.css" />
-    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-    <script src="../assets/vendor/js/helpers.js"></script>
-    <script src="../assets/js/config.js"></script>
+    <link rel="stylesheet" href="../../assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="../../assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="../../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="../../assets/css/demo.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <script src="../../assets/vendor/js/helpers.js"></script>
+    <script src="../../assets/js/config.js"></script>
 </head>
 <body>
     <div class="layout-wrapper layout-content-navbar">
@@ -76,7 +51,7 @@ if ($results = mysqli_query($conn, $sql)) {
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo" style=" padding: 70px;">
                     <div class="logo">
-                        <img style="border-radius: 500px; box-shadow: 2px 2px 20px #00008b; margin-top: 30px; margin-bottom: 5px;" src="../assets/img/avatars/logo.png" width="100" height="100" alt="">
+                        <img style="border-radius: 500px; box-shadow: 2px 2px 20px #00008b; margin-top: 30px; margin-bottom: 5px;" src="../../assets/img/avatars/logo.png" width="100" height="100" alt="">
                         <b><p style="font-size: 20px; color: blue; text-shadow: 2px 2px 50px #00008b; padding-left: 18px;">S L S U</p></b>
                     </div>
                     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -85,17 +60,53 @@ if ($results = mysqli_query($conn, $sql)) {
                 </div>
                 <div class="menu-inner-shadow"></div>
                 <ul class="menu-inner py-1">
-                    <li class="menu-item active">
-                        <a href="index.php" class="menu-link">
-                            <i class="menu-icon tf-icons bx bx-user-circle"></i>
-                            <div data-i18n="Analytics">Student  </div>
-                        </a>
-                    </li>
                     <li class="menu-item">
                         <a href="registrar/registrar.php" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-building"></i>
                             <div data-i18n="Analytics">Queuing Students</div>
                         </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                            <div data-i18n="Layouts">User</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                              <a href="student.php" class="menu-link">
+                                <div data-i18n="Analytics">Student</div>
+                              </a>
+                            </li>
+                            <li class="menu-item active">
+                              <a href="teacher.php" class="menu-link">
+                                <div data-i18n="Analytics">Teacher</div>
+                              </a>
+                            </li>
+                        </ul>
+                        <li class="menu-item">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons bx bx-calendar-event"></i>
+                            <div data-i18n="Layouts">Event</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                              <a href="#.php" class="menu-link">
+                                <div data-i18n="Analytics">Create Event</div>
+                              </a>
+                            </li>
+                            <li class="menu-item">
+                              <a href="#.php" class="menu-link">
+                                <div data-i18n="Analytics">Archive Event</div>
+                              </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="menu-item">
+                      <a href="#.php" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-list-ul"></i>
+                        <div data-i18n="Analytics">Report</div>
+                      </a>
+                    </li>
                     </li>
                 </ul>
             </aside>
@@ -114,7 +125,7 @@ if ($results = mysqli_query($conn, $sql)) {
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="../assets/img/avatars/user.png" alts class="w-px-40 h-auto rounded-circle" />
+                                        <img src="../../assets/img/avatars/user.png" alts class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
@@ -123,7 +134,7 @@ if ($results = mysqli_query($conn, $sql)) {
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="../assets/img/avatars/user.png" alt class="w-px-40 h-auto rounded-circle" />
+                                                        <img src="../../assets/img/avatars/user.png" alt class="w-px-40 h-auto rounded-circle" />
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
@@ -134,7 +145,7 @@ if ($results = mysqli_query($conn, $sql)) {
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="logout.php">
+                                        <a class="dropdown-item" href="../logout.php">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Log Out</span>
                                         </a>
@@ -164,7 +175,7 @@ if ($results = mysqli_query($conn, $sql)) {
                                                         <p class="form-control" id="lastName"><?php echo $lastname; ?></p>
                                                     </div>
                                                     <div class="mb-3 col-md-6">
-                                                        <label for="id" class="form-label">Student ID</label>
+                                                        <label for="id" class="form-label">Teacher ID</label>
                                                         <p class="form-control" id="id"><?php echo $id; ?></p>
                                                     </div>
                                                     <div class="mb-3 col-md-6">
@@ -200,84 +211,38 @@ if ($results = mysqli_query($conn, $sql)) {
                                     </div>
                                 </div>
                                 <br/>
-                                <div class="card mb-4">
-    <h5 class="card-header">Grades Details</h5>
-    <div class="card-body">
-        <hr class="my-0" />
-        <div class="card-body">
-            <div class="grades-display ">
-                <h2>Current Grades</h2>
-                <?php
-                if (isset($student_id)) {
-                    $sqlquery = "SELECT subject.subname, subject.yearid, grades.grades 
-                                 FROM grades 
-                                 JOIN subject ON grades.subid = subject.subid 
-                                 WHERE grades.student_id = '$student_id'
-                                 ORDER BY subject.yearid ASC";
-                    $results = mysqli_query($conn, $sqlquery);
-                    if (mysqli_num_rows($results) > 0) {
-                        $grades_by_year = [];
-                        while ($row = mysqli_fetch_assoc($results)) {
-                            $grades_by_year[$row['yearid']][] = $row;
-                        }
-
-                        foreach ($grades_by_year as $year => $grades) {
-                            echo "<div class='year-section'>";
-                            echo "<h3>Year Level: " . htmlspecialchars($year) . "</h3>";
-                            echo "<table class='table'>";
-                            echo "<thead><tr><th>Subject</th><th>Grade</th></tr></thead>";
-                            echo "<tbody>";
-                            $total_grade = 0;
-                            $count_grade = 0;
-                            foreach ($grades as $grade) {
-                                echo "<tr><td>" . htmlspecialchars($grade['subname']) . "</td><td>" . htmlspecialchars($grade['grades']) . "</td></tr>";
-                                $total_grade += $grade['grades'];
-                                $count_grade++;
-                            }
-                            $average_grade = $count_grade > 0 ? $total_grade / $count_grade : 0;
-                            echo "<tr><td><b>Average Grade</b></td><td>" . number_format($average_grade, 2) . "</td></tr>";
-                            echo "</tbody></table>";
-                            echo "</div>";
-                            // Store the last year level
-                            $last_year = $year;
-                        }
-                    } else {
-                        echo "<p>No grades available for this student.</p>";
-                    }
-                }
-                ?>
-                <!-- Button to update year level -->
-                <div class="text-center mt-4">
-<button class="btn btn-primary" ><a href="update_grades.php">Update Grades</a></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <footer class="content-footer footer bg-footer-theme">
-                </footer>
+              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                <div class="mb-2 mb-md-0">
+                  ©
+                  <script>
+                    document.write(new Date().getFullYear());
+                  </script>
+                  , made with ❤️ by
+                  <a href="https://www.facebook.com/james.jeager.3" target="_blank" class="footer-link fw-bolder">MeProfile</a>
+                </div>
+                
+              </div>
+            </footer>
                 <div class="content-backdrop fade"></div>
             </div>
         </div>
         <div class="layout-overlay layout-menu-toggle"></div>
     </div>
-    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../assets/vendor/js/bootstrap.js"></script>
-    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-    <script src="../assets/vendor/js/menu.js"></script>
-    <script src="../assets/js/main.js"></script>
-    <script src="../assets/js/pages-account-settings-account.js"></script>
+    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../../assets/vendor/js/bootstrap.js"></script>
+    <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../../assets/vendor/js/menu.js"></script>
+    <script src="../../assets/js/main.js"></script>
+    <script src="../../assets/js/pages-account-settings-account.js"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-<<<<<<< HEAD
 </body>
 </html>
-=======
-  </body>
-</html>
->>>>>>> 4ae5e145384c09f9378cafffe78a0f78da6985c3

@@ -1,5 +1,5 @@
 <?php
-include '../config.php';
+include '../../config.php';
 
 $student_id = $_GET['student_id'];
 

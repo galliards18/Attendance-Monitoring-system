@@ -4,7 +4,7 @@ if (!isset($_SESSION["Login"])) {
     header("location: choose.php");
     exit();
 }
-require_once "config.php";
+require_once "../config.php";
 function sanitize($data) {
     return htmlspecialchars(strip_tags($data));
 }
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
   class="light-style layout-menu-fixed"
   dir="ltr"
   data-theme="theme-default"
-  data-assets-path="../assets/"
+  data-assets-path="../../assets/"
 
 >
   <head>
@@ -45,12 +45,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Dashboard</title>
+    <title>Account</title>
 
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="../../assets/img/favicon/favicon.ico" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -61,26 +61,26 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     />
 
     <!-- Icons. Uncomment required icon fonts -->
-    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="../../assets/vendor/fonts/boxicons.css" />
 
     <!-- Core CSS -->
-    <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="../assets/css/demo.css" />
+    <link rel="stylesheet" href="../../assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="../../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="../../assets/css/demo.css" />
 
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
-    <link rel="stylesheet" href="../assets/vendor/libs/apex-charts/apex-charts.css" />
+    <link rel="stylesheet" href="../../assets/vendor/libs/apex-charts/apex-charts.css" />
 
     <!-- Page CSS -->
 
     <!-- Helpers -->
-    <script src="../assets/vendor/js/helpers.js"></script>
+    <script src="../../assets/vendor/js/helpers.js"></script>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="../assets/js/config.js"></script>
+    <script src="../../assets/js/config.js"></script>
   </head>
 
   <body>
@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo" style=" padding: 70px;">
                     <div class="logo">
-                        <img style="border-radius: 500px; box-shadow: 2px 2px 20px #00008b; margin-top: 30px; margin-bottom: 5px;" src="../assets/img/avatars/logo.png" width="100" height="100" alt="">
+                        <img style="border-radius: 500px; box-shadow: 2px 2px 20px #00008b; margin-top: 30px; margin-bottom: 5px;" src="../../assets/img/avatars/logo.png" width="100" height="100" alt="">
                         <b>
                             <p style="font-size: 20px; color: blue; text-shadow: 2px 2px 50px #00008b; padding-left: 18px;">S L S U</p>
                         </b>
@@ -113,6 +113,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             <li class="menu-item">
                                 <a href="teacher.php" class="menu-link">
                                     <div data-i18n="Without menu">Profile</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#.php" class="menu-link">
+                                    <div data-i18n="Without menu">OTQRC</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="#.php" class="menu-link">
+                                    <div data-i18n="Without menu">History Log</div>
                                 </a>
                             </li>
                         </ul>
@@ -152,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                      <img src="../assets/img/avatars/user.png" alts class="w-px-40 h-auto rounded-circle" />
+                      <img src="../../assets/img/avatars/user.png" alts class="w-px-40 h-auto rounded-circle" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -161,7 +171,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-                              <img src="../assets/img/avatars/user.png" alt class="w-px-40 h-auto rounded-circle" />
+                              <img src="../../assets/img/avatars/user.png" alt class="w-px-40 h-auto rounded-circle" />
                             </div>
                           </div>
                           <div class="flex-grow-1">
@@ -172,7 +182,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                       </a>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="logout.php">
+                      <a class="dropdown-item" href="../logout.php">
                         <i class="bx bx-power-off me-2"></i>
                         <span class="align-middle">Log Out</span>
                       </a>
@@ -241,9 +251,8 @@ endif; ?>
                                                   echo "<td>" . $row["birthday"] . "</td>";
                                                   echo "<td>" . $row["phone"] . "</td>";
                                                   echo "<td class='action-icons'>";
-                                                  echo "<a href='view.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-show'></i></a>";
-                                                  echo "<a href='grade.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-book-content'></i></a>";
-                                                  echo "<a onclick=\"return confirm('Are you sure?')\" href='Delete.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-trash'></i></a>";
+                                                  echo "<a href='student_profile.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-show'></i></a>";
+                                                  echo "<a href='giving_grades.php?student_id=" . $row["student_id"] . "'><i class='menu-icon tf-icons bx bx-book-content'></i></a>";
                                                   echo "</td>";
                                                   echo "</tr>";
                                               }
@@ -309,22 +318,22 @@ endif; ?>
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
-    <script src="../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../assets/vendor/js/bootstrap.js"></script>
-    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../../assets/vendor/js/bootstrap.js"></script>
+    <script src="../../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-    <script src="../assets/vendor/js/menu.js"></script>
+    <script src="../../assets/vendor/js/menu.js"></script>
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
+    <script src="../../assets/vendor/libs/apex-charts/apexcharts.js"></script>
 
     <!-- Main JS -->
-    <script src="../assets/js/main.js"></script>
+    <script src="../../assets/js/main.js"></script>
 
     <!-- Page JS -->
-    <script src="../assets/js/dashboards-analytics.js"></script>
+    <script src="../../assets/js/dashboards-analytics.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>

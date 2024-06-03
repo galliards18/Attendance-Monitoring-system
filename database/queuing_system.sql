@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 22, 2024 at 05:57 AM
+-- Generation Time: May 28, 2024 at 09:35 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -43,6 +43,21 @@ INSERT INTO `admin` (`id`, `email`, `password`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `attendance`
+--
+
+CREATE TABLE `attendance` (
+  `id` int NOT NULL,
+  `student_id` int DEFAULT NULL,
+  `teacher_id` int DEFAULT NULL,
+  `student_name` varchar(255) DEFAULT NULL,
+  `status` varchar(10) DEFAULT NULL,
+  `datetimetaken` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `grades`
 --
 
@@ -51,7 +66,7 @@ CREATE TABLE `grades` (
   `student_id` int DEFAULT NULL,
   `yearid` int DEFAULT NULL,
   `subid` int DEFAULT NULL,
-  `grades` float(10,0) DEFAULT NULL
+  `grades` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -59,7 +74,16 @@ CREATE TABLE `grades` (
 --
 
 INSERT INTO `grades` (`gradesid`, `student_id`, `yearid`, `subid`, `grades`) VALUES
-(1, 20, 1, 1, 2);
+(5, 24, NULL, 6, 1.2),
+(6, 24, NULL, 9, 4.6),
+(7, 24, NULL, 7, 1),
+(8, 24, NULL, 8, 5),
+(9, 24, NULL, 10, 1),
+(10, 25, NULL, 17, 9),
+(11, 25, NULL, 18, 2),
+(12, 25, NULL, 16, 2),
+(15, 24, NULL, 1, 0),
+(16, 27, NULL, 5, 1.2);
 
 -- --------------------------------------------------------
 
@@ -80,8 +104,9 @@ CREATE TABLE `registrar` (
 --
 
 INSERT INTO `registrar` (`Date`, `Que_no`, `student_id`, `student_fullname`, `IsActive`) VALUES
-('2024-04-22', 1001, 20, '', 0),
-('2024-04-22', 1002, 20, '', 1);
+('2024-05-28', 1001, 25, '', 1),
+('2024-05-28', 1002, 24, '', 0),
+('2024-05-28', 1003, 27, '', 1);
 
 -- --------------------------------------------------------
 
@@ -108,10 +133,9 @@ CREATE TABLE `student_registration` (
 --
 
 INSERT INTO `student_registration` (`student_id`, `id`, `firstname`, `lastname`, `address`, `gender`, `email`, `birthday`, `phone`, `yearid`, `subid`) VALUES
-(20, '2110055-1', 'Re Ann', 'Nunez', 'Tinago, Tomas Oppus, Southern leyte', 'female', 'jamessabandal@gmail.com', '2024-03-10', '09383403973', NULL, NULL),
-(21, '2110055-1', 'Ryan', 'Nunez', 'Tinago, Tomas Oppus, Southern leyte', 'male', 'jamessabandal@gmail.com', '2024-03-12', '09383403973', NULL, NULL),
-(22, '2110055-1', 'Rico James', 'Sabandal', 'Tinago, Tomas Oppus, Southern leyte', 'male', 'jamessabandal@gmail.com', '2024-03-18', '09383403973', NULL, NULL),
-(23, '2110055-1', 'Riche Jim', 'Sabandal', 'Tinago, Tomas Oppus, Southern leyte', 'male', 'jamessabandal@gmail.com', '2024-03-23', '09383403973', NULL, NULL);
+(24, '2110055-1', 'Rico James', 'Sabandal', 'Tinago, Tomas Oppus, Southern Leyte', 'male', 'jamessabandal@gmail.com', '2000-12-18', '09383403973', 1, NULL),
+(25, '3110055-1', 'Re Ann', 'Nunez', 'Cambite, Tomas Oppus, Southern Leyte', 'female', 'jamessabandal@gmail.com', '2024-05-14', '09383403973', 4, NULL),
+(27, '2210066-1', 'Jay', 'Nacano', 'Tinago, Tomas Oppus, Southern leyte', 'male', 'jamessabandal@gmail.com', '2024-05-10', '09123456789', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -154,6 +178,35 @@ INSERT INTO `subject` (`subid`, `yearid`, `subname`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `teacher_registration`
+--
+
+CREATE TABLE `teacher_registration` (
+  `teacher_id` int NOT NULL,
+  `id` varchar(255) DEFAULT NULL,
+  `firstname` varchar(255) DEFAULT NULL,
+  `lastname` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `birthday` date DEFAULT NULL,
+  `phone` varchar(15) DEFAULT NULL,
+  `yearid` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `teacher_registration`
+--
+
+INSERT INTO `teacher_registration` (`teacher_id`, `id`, `firstname`, `lastname`, `address`, `gender`, `email`, `birthday`, `phone`, `yearid`) VALUES
+(1, '2110055-1', 'Rex', 'Toledo', 'sogod, southern leyte', 'male', 'jamessabandal@gmail.com', '2024-05-31', '09999999999', 1),
+(2, '3110055-1', 'Rex', 'Toledo', 'sogod, southern leyte', 'male', 'jamessabandal@gmail.com', '2024-05-01', '09999999999', 2),
+(3, '4110055-1', 'Rex', 'Toledo', 'sogod, southern leyte', 'male', 'jamessabandal@gmail.com', '2024-05-01', '099999999999', 3),
+(4, '5110055-1', 'Rex', 'Toledo', 'sogod, southern leyte', 'male', 'jamessabandal@gmail.com', '2024-05-03', '099999999999', 4);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `yearlvl`
 --
 
@@ -183,6 +236,12 @@ ALTER TABLE `admin`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `grades`
 --
 ALTER TABLE `grades`
@@ -203,14 +262,21 @@ ALTER TABLE `registrar`
 --
 ALTER TABLE `student_registration`
   ADD PRIMARY KEY (`student_id`),
-  ADD KEY `yearid` (`yearid`),
-  ADD KEY `subid` (`subid`);
+  ADD UNIQUE KEY `subid` (`subid`),
+  ADD KEY `yearid` (`yearid`);
 
 --
 -- Indexes for table `subject`
 --
 ALTER TABLE `subject`
   ADD PRIMARY KEY (`subid`),
+  ADD KEY `yearid` (`yearid`);
+
+--
+-- Indexes for table `teacher_registration`
+--
+ALTER TABLE `teacher_registration`
+  ADD PRIMARY KEY (`teacher_id`),
   ADD KEY `yearid` (`yearid`);
 
 --
@@ -230,22 +296,34 @@ ALTER TABLE `admin`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
+-- AUTO_INCREMENT for table `attendance`
+--
+ALTER TABLE `attendance`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `grades`
 --
 ALTER TABLE `grades`
-  MODIFY `gradesid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `gradesid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `student_registration`
 --
 ALTER TABLE `student_registration`
-  MODIFY `student_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `student_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `subject`
 --
 ALTER TABLE `subject`
   MODIFY `subid` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `teacher_registration`
+--
+ALTER TABLE `teacher_registration`
+  MODIFY `teacher_id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `yearlvl`
@@ -283,6 +361,12 @@ ALTER TABLE `student_registration`
 --
 ALTER TABLE `subject`
   ADD CONSTRAINT `subject_ibfk_1` FOREIGN KEY (`yearid`) REFERENCES `yearlvl` (`yearid`);
+
+--
+-- Constraints for table `teacher_registration`
+--
+ALTER TABLE `teacher_registration`
+  ADD CONSTRAINT `teacher_registration_ibfk_1` FOREIGN KEY (`yearid`) REFERENCES `yearlvl` (`yearid`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

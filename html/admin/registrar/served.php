@@ -1,5 +1,5 @@
 <?php
-include '../config.php';
+include '../../config.php';
 
 $current_que_number = $_POST['que_no'];
 

@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET" && isset($_GET['student_id'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Update</title>
+    <title>Account</title>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
